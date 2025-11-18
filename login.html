@@ -22,25 +22,45 @@ button{width:100%;padding:12px;margin-top:20px;background:#FFCDB2;border:none;bo
   <p id="error"></p>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-const supabase = supabase.createClient(
-  "https://wofnhccvyghtoykowsfi.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvZm5oY2N2eWdodG95a293c2ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0NzI3NjksImV4cCI6MjA3OTA0ODc2OX0.TcKp3_oBSM7P0azu_BNjepBKwXXm9hA7Zp6iupdWfE0"
-);
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// 1. Defina suas credenciais (SUBSTITUA ESTES VALORES!)
+const SUPABASE_URL = "https://wofnhccvyghtoykowsfi.supabase.co"; 
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvZm5oY2N2eWdodG95a293c2ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0NzI3NjksImV4cCI6MjA3OTA0ODc2OX0.TcKp3_oBSM7P0azu_BNjepBKwXXm9hA7Zp6iupdWfE0"; 
+
+// 2. Inicialize o cliente Supabase corretamente
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 async function login(){
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+    // Limpa a mensagem de erro anterior
+    document.getElementById("error").textContent = ""; 
+    
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    // Use o cliente inicializado
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
-  if(error){
-    document.getElementById("error").textContent = "Senha incorreta!";
-  } else {
-    window.location.href = "admin.html";
-  }
+    if(error){
+        console.error("Erro de login Supabase:", error); // Para depuração
+        
+        // Feedback de erro mais específico
+        let errorMessage = "Erro desconhecido. Tente novamente.";
+
+        if (error.message.includes("Invalid login credentials")) {
+            errorMessage = "Credenciais inválidas. Verifique seu e-mail e senha.";
+        } else {
+            errorMessage = `Ocorreu um erro: ${error.message}`;
+        }
+        
+        document.getElementById("error").textContent = errorMessage;
+    } else {
+        // Sucesso no login
+        window.location.href = "admin.html";
+    }
 }
 </script>
 </body>
 </html>
+
 
