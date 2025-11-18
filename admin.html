@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin • Gerenciar Pets</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <style>
+    :root{
+      --cor-primaria:#A8DADC; --cor-sec:#457B9D; --cor-acento:#FFCDB2;
+      --cor-sucesso:#A2D5AB; --bg:#F1FAEE; --text:#1D3557; --muted:#64748b;
+      --sombra:0 6px 18px rgba(0,0,0,0.08); --r:12px;
+    }
+    *{box-sizing:border-box;font-family:'Poppins',sans-serif}
+    body{margin:0;background:var(--bg);color:var(--text);padding:28px}
+    h1{margin:0 0 8px;font-size:26px}
+    .sub{color:var(--muted);margin-bottom:18px}
+
+    .form-container{
+      background:#fff;padding:18px;border-radius:14px;box-shadow:var(--sombra);
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;align-items:start;
+    }
+    input,select,textarea{padding:10px;border-radius:10px;border:2px solid var(--cor-primaria);width:100%;font-size:14px}
+    textarea{grid-column:span 2;min-height:90px}
+    .actions-row{grid-column:span 2;display:flex;gap:10px;justify-content:flex-end}
+
+    .btn{padding:12px 16px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+    .btn.save{background:var(--cor-acento)}
+    .btn.clear{background:transparent;border:2px solid var(--cor-sec);color:var(--cor-sec)}
+    .btn.export{background:var(--cor-primaria);color:#fff}
+    .btn.small{padding:8px 10px;border-radius:8px;font-weight:600}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-top:22px}
+    .card{background:#fff;border-radius:12px;box-shadow:var(--sombra);overflow:hidden;position:relative}
+    .card img{width:100%;height:170px;object-fit:cover}
+    .card .info{padding:12px}
+    .badge{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--cor-sec);color:#fff;font-size:12px;margin-bottom:8px}
+    .status{position:absolute;top:12px;right:12px;padding:6px 10px;border-radius:999px;background:var(--cor-sucesso);color:#fff;font-weight:700}
+
+    .card .meta{font-size:13px;color:var(--muted);margin:6px 0}
+    .card .card-actions{display:flex;gap:8px;padding:12px}
+
+    footer{margin-top:28px;color:var(--muted);font-size:13px}
+    @media(max-width:700px){ textarea{grid-column:span 1} .actions-row{grid-column:span 1} }
+  </style>
+</head>
+<body>
+
+  <h1>Painel Admin — Pets para Adoção</h1>
+  <p class="sub">Cadastre, edite, exclua e marque pets como adotados. Mudanças aparecem automaticamente em <b>pets.html</b>.</p>
+
+  <form id="form" class="form-container" autocomplete="off">
+    <input id="name" placeholder="Nome" required />
+    <input id="species" placeholder="Espécie (ex: Gato, Cachorro)" required />
+    <input id="age" type="number" min="0" placeholder="Idade (anos)" />
+    <input id="breed" placeholder="Raça (opcional)" />
+    <select id="gender"><option value="">Sexo</option><option>Macho</option><option>Fêmea</option></select>
+    <select id="size"><option value="">Porte</option><option>Pequeno</option><option>Médio</option><option>Grande</option></select>
+    <input id="image" type="file" accept="image/*" />
+    <select id="vaccinated"><option value="">Vacinado?</option><option>Sim</option><option>Não</option></select>
+    <select id="dewormed"><option value="">Vermifugado?</option><option>Sim</option><option>Não</option></select>
+    <textarea id="desc" placeholder="Descrição / temperamento"></textarea>
+
+    <div class="actions-row">
+      <button class="btn save" id="saveBtn" type="submit"><i class="fas fa-save"></i> Salvar Pet</button>
+      <button class="btn clear" id="clearAll" type="button"><i class="fas fa-trash-alt"></i> Limpar Lista</button>
+      <button class="btn export" id="exportJson" type="button"><i class="fas fa-file-export"></i> Exportar JSON</button>
+      <label for="importFile" class="btn small" style="background:#fff;border:2px dashed var(--cor-primaria;);cursor:pointer">
+        <i class="fas fa-file-import"></i> Importar
+      </label>
+      <input id="importFile" type="file" accept=".json" style="display:none" />
+    </div>
+  </form>
+
+  <div id="list" class="grid"></div>
+  <p id="empty" style="text-align:center;color:var(--muted);display:none;margin-top:12px">Nenhum pet cadastrado ainda.</p>
+
+  <footer>Salvo localmente no navegador. Chave localStorage: <code>pets_adocao_completos</code></footer>
+
+<script>
+
+  const LS_KEY = 'pets_adocao_completos';
+  const form = document.getElementById('form');
+  const list = document.getElementById('list');
+  const empty = document.getElementById('empty');
+  const importFile = document.getElementById('importFile');
+
+  let pets = [];
+  let editingId = null;
+
+  // BLOQUEIO DE ACESSO
+if (localStorage.getItem("admin_logado") !== "true") {
+    alert("Acesso negado. Faça login primeiro.");
+    window.location.href = "login.html";
+}
+
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+  function load(){
+    try{ pets = JSON.parse(localStorage.getItem(LS_KEY)) || []; }catch(e){ pets = []; }
+    render();
+  }
+
+  function saveLS(){
+    localStorage.setItem(LS_KEY, JSON.stringify(pets));
+    render();
+  }
+
+  function create(data){
+    pets.unshift({...data, id: uid(), adopted: false});
+    saveLS();
+  }
+
+  function update(id,data){
+    pets = pets.map(p => p.id === id ? {...p, ...data} : p);
+    saveLS();
+  }
+
+  function remove(id){
+    if(!confirm('Excluir este pet?')) return;
+    pets = pets.filter(p => p.id !== id);
+    saveLS();
+  }
+
+  function toggleAdopt(id){
+    pets = pets.map(p => p.id === id ? {...p, adopted: !p.adopted} : p);
+    saveLS();
+  }
+
+  function startEdit(id){
+    const p = pets.find(x => x.id === id);
+    if(!p) return;
+    editingId = id;
+    document.getElementById('name').value = p.name || '';
+    document.getElementById('species').value = p.species || '';
+    document.getElementById('age').value = p.age || '';
+    document.getElementById('breed').value = p.breed || '';
+    document.getElementById('gender').value = p.gender || '';
+    document.getElementById('size').value = p.size || '';
+    document.getElementById('image').value = p.image || '';
+    document.getElementById('vaccinated').value = p.vaccinated || '';
+    document.getElementById('dewormed').value = p.dewormed || '';
+    document.getElementById('desc').value = p.desc || '';
+    document.getElementById('saveBtn').textContent = 'Salvar Alterações';
+  }
+
+  function cancelEdit(){
+    editingId = null;
+    form.reset();
+    document.getElementById('saveBtn').innerHTML = '<i class="fas fa-save"></i> Salvar Pet';
+  }
+
+  function render(){
+    list.innerHTML = '';
+    if(!pets.length){ empty.style.display = 'block'; return; } else empty.style.display = 'none';
+    pets.forEach(p => {
+      const card = document.createElement('div'); card.className = 'card';
+      if(p.image) card.innerHTML = '<img src="'+p.image+'" alt="'+(p.name||'pet')+'">';
+      let info = '<div class="info">';
+      info += '<span class="badge">'+(p.species||'Espécie')+'</span>';
+      info += '<h3 style="margin:6px 0 4px 0">'+(p.name||'Sem nome')+'</h3>';
+      info += '<div class="meta"><b>Idade:</b> '+(p.age||'?')+' anos • <b>Sexo:</b> '+(p.gender||'—')+'</div>';
+      info += '<div class="meta"><b>Raça:</b> '+(p.breed||'—')+' • <b>Porte:</b> '+(p.size||'—')+'</div>';
+      info += '<div class="meta"><b>Vacinado:</b> '+(p.vaccinated||'—')+' • <b>Vermifugado:</b> '+(p.dewormed||'—')+'</div>';
+      if(p.desc) info += '<p style="margin-top:8px;color:var(--muted)">'+p.desc+'</p>';
+      info += '</div>';
+      card.innerHTML += info;
+      const actions = document.createElement('div'); actions.className='card-actions';
+      const ado = document.createElement('button'); ado.className='btn small'; ado.style.background = p.adopted ? 'var(--cor-sucesso)' : 'var(--cor-primaria)'; ado.textContent = p.adopted ? 'Desmarcar Adotado' : 'Marcar Adotado'; ado.onclick = ()=> toggleAdopt(p.id);
+      const ed = document.createElement('button'); ed.className='btn small'; ed.style.background = 'var(--cor-acento)'; ed.textContent = 'Editar'; ed.onclick = ()=> startEdit(p.id);
+      const del = document.createElement('button'); del.className='btn small'; del.style.background = '#ff8080'; del.textContent = 'Excluir'; del.onclick = ()=> remove(p.id);
+      actions.append(ado, ed, del);
+      card.appendChild(actions);
+      if(p.adopted){
+        const tag = document.createElement('div'); tag.className='status'; tag.textContent='Adotado ❤'; card.appendChild(tag);
+      }
+      list.appendChild(card);
+    });
+  }
+
+  // Form submit
+form.addEventListener('submit', e=>{
+  e.preventDefault();
+
+  const fileInput = document.getElementById('image');
+  const file = fileInput.files[0];
+
+  function processAndSave(base64){
+    const data = {
+      name: document.getElementById('name').value.trim(),
+      species: document.getElementById('species').value.trim(),
+      age: document.getElementById('age').value.trim(),
+      breed: document.getElementById('breed').value.trim(),
+      gender: document.getElementById('gender').value,
+      size: document.getElementById('size').value,
+      image: base64 || "",   // <-- BASE64 AQUI
+      vaccinated: document.getElementById('vaccinated').value,
+      dewormed: document.getElementById('dewormed').value,
+      desc: document.getElementById('desc').value.trim()
+    };
+
+    if(editingId){
+      update(editingId, data);
+      cancelEdit();
+    } else {
+      create(data);
+      form.reset();
+    }
+  }
+
+  // Se nenhum arquivo novo foi enviado (edição)
+  if(!file){
+    const oldImg = editingId ? pets.find(p => p.id === editingId)?.image || "" : "";
+    processAndSave(oldImg);
+    return;
+  }
+
+  // Se o usuário enviou um arquivo → converter
+  const reader = new FileReader();
+  reader.onload = () => processAndSave(reader.result);
+  reader.readAsDataURL(file);
+});
+
+
+  // Clear all
+  document.getElementById('clearAll').addEventListener('click', ()=>{
+    if(!confirm('Remover todos os pets?')) return;
+    pets = []; saveLS();
+  });
+
+  // Export JSON
+  document.getElementById('exportJson').addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify(pets, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'pets_export.json'; a.click(); URL.revokeObjectURL(url);
+  });
+
+  // Import JSON
+  importFile.addEventListener('change', e=>{
+    const file = e.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try{
+        const imported = JSON.parse(ev.target.result);
+        if(!Array.isArray(imported)) throw new Error('Arquivo inválido');
+        // optional: merge or replace? we'll merge but avoid duplicates by id
+        const existingIds = new Set(pets.map(p=>p.id));
+        imported.forEach(it=>{
+          if(!it.id) it.id = uid();
+          if(!existingIds.has(it.id)) pets.unshift(it);
+        });
+        saveLS();
+        alert('Importação concluída.');
+      }catch(err){
+        alert('Erro ao importar: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
+  // Inicializa
+  load();
+</script>
+</body>
+</html>

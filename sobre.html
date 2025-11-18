@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre Nós - PetAdote 🐾</title>
+    <!-- Fontes e Ícones -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* Definição de Cores Pastéis (Baseado no seu pedido/imagem) */
+        :root {
+           --cor-primaria: #A8DADC; /* Azul Pastel Claro - Fundo/Destaque */
+    --cor-secundaria: #457B9D; /* Azul/Ciano Médio - Textos Secundários */
+    --cor-acento: #FFCDB2; /* Pêssego Pastel - Botões/Ações */
+    --cor-sucesso: #A2D5AB; /* Verde Pastel - Sucesso/Destaque Positivo */
+    --cor-fundo-claro: #F1FAEE; /* Quase Branco - Fundo Principal */
+    --cor-texto-escuro: #1D3557; /* Azul Escuro - Textos Principais */
+    --sombra-suave: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --raio-arredondado: 12px;
+
+            --raio-mini: 6px;
+        }
+
+        /* Reset Básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Estilo do Corpo */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--cor-fundo-claro);
+            color: var(--cor-texto-escuro);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            
+        }
+
+        /* Tipografia */
+        h1, h2, h3, h4 {
+            color: var(--cor-texto-escuro);
+            margin-bottom: 0.8em;
+            font-weight: 700;
+        }
+
+        h1 { font-size: 2.5em; }
+        h2 { font-size: 2em; }
+        h3 { font-size: 1.5em; color: var(--cor-secundaria); }
+
+        .section-subtitle {
+            font-size: 1.2em;
+            color: var(--cor-secundaria);
+            font-weight: 500;
+            margin-bottom: 2em;
+        }
+
+        /* Links */
+        a {
+            color: var(--cor-secundaria);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--cor-texto-escuro);
+        }
+
+        /* Contêiner principal para centralizar o conteúdo */
+        main {
+    flex-grow: 1;
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+/* Estilo do Header */
+.main-header {
+    background-color: white;
+    box-shadow: var(--sombra-suave);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-content {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: var(--cor-texto-escuro);
+    display: flex;
+    gap: 10px;
+}
+
+.logo img{
+  background-color: var(--cor-primaria);
+  width: 50px;
+  height: 50px;
+  border-radius: var(--raio-arredondado);
+}
+
+/* Estilo da Navegação Principal */
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+.main-nav a {
+    font-weight: 600;
+    padding: 5px 0;
+    position: relative;
+}
+
+/* Efeito sutil de sublinhado arredondado nos links */
+.main-nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background-color: var(--cor-acento);
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+.main-nav a:hover::after {
+    width: 100%;
+}
+
+/* Link de Admin discreto */
+.admin-link {
+    font-size: 0.85em;
+    opacity: 0.6;
+    font-weight: 400;
+}
+
+.admin-link:hover {
+    opacity: 1;
+}
+
+
+        /* --- Hero Section --- */
+        .about-hero {
+            text-align: center;
+            padding: 60px 20px;
+            background-color: var(--cor-primaria);
+            border-radius: var(--raio-arredondado);
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* --- Mission/Vision/Values Section --- */
+        .mission-vision-section {
+            display: flex;
+            gap: 45px;
+            align-items: flex-start;
+        }
+
+        .mission-text-content {
+            flex: 1;
+        }
+
+        .mission-text-content h3 {
+            margin-top: 1.5em;
+            display: flex;
+            align-items: center;
+        }
+        .mission-text-content h3 i {
+            margin-right: 10px;
+            color: var(--cor-acento);
+            font-size: 1.3em;
+        }
+
+        .values-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            background-color: var(--cor-primaria);
+            border-radius: var(--raio-arredondado);
+            box-shadow: var(--sombra-suave);
+        }
+
+        .value-item {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--cor-fundo-claro);
+            border-radius: var(--raio-mini);
+            transition: transform 0.3s;
+        }
+
+        .value-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .value-item i {
+            font-size: 2.5em;
+            color: var(--cor-secundaria);
+            margin-bottom: 10px;
+        }
+
+        .value-item h4 {
+            margin-bottom: 0.5em;
+            font-weight: 600;
+        }
+
+        /* --- Call to Action (CTA) Section --- */
+        .call-to-action-section {
+            text-align: center;
+            padding: 40px;
+            border-top: 1px solid var(--cor-primaria);
+        }
+
+        /* --- Botões Padrão (Estilo Animado e Arredondado) --- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 25px;
+            border-radius: var(--raio-arredondado);
+            text-transform: uppercase;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
+            border: none;
+            margin-top: 20px;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primario {
+            background-color: var(--cor-acento);
+            color: var(--cor-texto-escuro);
+            box-shadow: var(--sombra-suave);
+        }
+
+        .btn-primario:hover {
+            background-color: #FFB399; /* Um pouco mais escuro que o pêssego */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primario:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secundario {
+            background-color: var(--cor-secundaria);
+            color: var(--cor-fundo-claro);
+            box-shadow: var(--sombra-suave);
+        }
+
+        .btn-secundario:hover {
+            background-color: #3C6A88; /* Um pouco mais escuro */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* --- Footer Styling --- */
+        .main-footer {
+    background-color: var(--cor-secundaria); /* Um tom mais escuro e sóbrio para o fundo */
+    color: var(--cor-fundo-claro); /* Texto claro */
+    padding: 40px 0 0 0; /* Padding superior para o conteúdo */
+    margin-top: 40px;
+}
+
+.footer-content {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    flex-wrap: wrap; 
+    padding-bottom: 30px;
+}
+
+.footer-col {
+    flex-basis: 250px; /* Largura mínima para as colunas */
+}
+
+.footer-col h4 {
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--cor-acento); /* Destaque pastel */
+}
+
+.footer-col p, .footer-col li {
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
+
+.footer-col ul {
+    list-style: none;
+}
+
+/* Links do Rodapé */
+.footer-col a {
+    color: var(--cor-fundo-claro);
+    transition: color 0.3s ease;
+}
+
+.footer-col a:hover {
+    color: var(--cor-acento); /* Efeito hover em cor pastel */
+}
+
+.footer-branding .logo {
+    font-size: 2em;
+    margin-bottom: 15px;
+    width: 350px;
+    display: flex;
+    color: var(--cor-fundo-claro); 
+}
+
+.footer-branding .logo img{
+  background-color: var(--cor-secundaria); 
+}
+
+/* Linha de Copyright e Admin */
+.footer-bottom {
+    background-color: var(--cor-texto-escuro); /* Faixa inferior mais escura para contraste */
+    padding: 15px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8em;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Link de Admin discreto no Footer */
+.admin-link-footer {
+    font-size: 0.75em; /* Bem pequeno */
+    opacity: 0.5;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--cor-fundo-claro); /* Cor clara */
+}
+
+.admin-link-footer:hover {
+    opacity: 1;
+    color: var(--cor-acento); /* Destaque ao passar o mouse */
+}
+
+
+        /* --- Responsividade (Mobile First) --- */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                padding-bottom: 15px;
+            }
+
+            .main-nav {
+                margin-top: 10px;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 100%;
+            }
+
+            .main-nav a {
+                margin: 5px 8px;
+                font-size: 0.9em;
+            }
+            
+            body {
+                padding-top: 130px; /* Ajusta o padding do body para o header em mobile */
+            }
+
+            .mission-vision-section {
+                flex-direction: column;
+            }
+
+            .values-grid {
+                grid-template-columns: 1fr;
+                margin-top: 30px;
+                padding: 15px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-col {
+                margin-bottom: 25px;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+    <div class="header-content">
+        <a href="index.html" class="logo">
+            <span style="color: var(--cor-acento);">Pets </span>do Coração <img src="https://uploads.onecompiler.io/442h72dq4/443se3c38/image-removebg-preview.png" width="50px">
+        </a>
+        
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">Início</a></li>
+                <li><a href="pets.html">Nossos Pets</a></li>
+                <li><a href="doacao.html">Quero Doar</a></li>
+                <li><a href="sobre.html">Sobre nós</a></li>
+            </ul>
+        </nav>
+
+        <a href="login.html" target="_blank" class="admin-link">Admin</a>
+    </div>
+</header>
+
+
+    <main class="main-content">
+        <!-- Seção Hero/Introdução -->
+        <section class="about-hero">
+            <h1>Nossa História de Amor e Resgate</h1>
+            <p class="section-subtitle">A PetAdote nasceu de um sonho: dar uma segunda chance a cada patinha abandonada.</p>
+        </section>
+
+        <!-- Seção Missão, Visão e Valores -->
+        <section class="mission-vision-section">
+            <div class="mission-text-content">
+                <h2>Missão e Valores</h2>
+                <p>Desde 2020, trabalhamos incansavelmente para resgatar, reabilitar e encontrar lares permanentes para cães e gatos em situação de vulnerabilidade. Acreditamos que o amor é a melhor cura.</p>
+
+                <h3><i class="fas fa-bullseye"></i> Nossa Missão</h3>
+                <p>Ser a ponte de esperança entre animais necessitados e famílias amorosas, promovendo a guarda responsável e combatendo o abandono.</p>
+                
+                <h3><i class="fas fa-eye"></i> Nossa Visão</h3>
+                <p>Um futuro onde todos os animais de rua tenham um lar seguro e amoroso, e onde a conscientização sobre o bem-estar animal seja universal.</p>
+            </div>
+            
+            <div class="values-grid">
+                <div class="value-item">
+                    <i class="fas fa-heart"></i>
+                    <h4>Compromisso</h4>
+                    <p>Cuidado e dedicação total ao bem-estar e saúde de cada pet.</p>
+                </div>
+                <div class="value-item">
+                    <i class="fas fa-hands-helping"></i>
+                    <h4>Transparência</h4>
+                    <p>Gestão clara dos recursos e processos de adoção e doação.</p>
+                </div>
+                <div class="value-item">
+                    <i class="fas fa-handshake"></i>
+                    <h4>Responsabilidade</h4>
+                    <p>Promover a educação e a guarda responsável em nossa comunidade.</p>
+                </div>
+                <div class="value-item">
+                    <i class="fas fa-user-friends"></i>
+                    <h4>Comunidade</h4>
+                    <p>Construir uma rede de apoio forte para o resgate e adoção.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção Call to Action -->
+        <section class="call-to-action-section">
+            <h2>Faça Parte Desta História!</h2>
+            <p>Seja como adotante, doador ou voluntário, seu envolvimento é o que nos move.</p>
+            <a href="doacao.html" class="btn btn-primario">
+                <i class="fas fa-dollar-sign"></i> Doar Agora
+            </a>
+            <a href="pets.html" class="btn btn-secundario" style="margin-left: 15px;">
+                <i class="fas fa-paw"></i> Adotar um Amigo
+            </a>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+    <div class="footer-content">
+        
+        <div class="footer-col footer-branding">
+            <a href="index.html" class="logo">
+                <span style="color: var(--cor-acento);">Pets </span>do Coração <img src="https://uploads.onecompiler.io/442h72dq4/443se3c38/image-removebg-preview.png" width="25px">
+            </a>
+            <p>A instituição que une corações com patinhas.</p>
+        </div>
+        
+        <div class="footer-col footer-nav-links">
+            <h4>Páginas</h4>
+            <ul>
+                <li><a href="index.html">Início</a></li>
+                <li><a href="pets.html">Nossos Pets</a></li>
+                <li><a href="doacao.html">Quero Doar</a></li>
+                <li><a href="sobre.html">Sobre nós</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col footer-contact">
+            <h4>Contato & Redes</h4>
+            <p>Email: contato@petadote.org</p>
+            <p>Telefone: (00) 1234-5678</p>
+            <p>Loc: Santa Maria da Vitória (BA)</p>
+            <div class="social-links">
+                <a href="#" class="social-icon">Facebook</a> |
+                <a href="#" class="social-icon">Instagram</a>
+            </div>
+        </div>
+
+    </div>
+    
+    <div class="footer-bottom">
+        <p>
+            &copy; 2025 Pets do Coração. CNPJ: 39.415.432/0001‑07 | Todos os direitos reservados.
+        </p>
+        <a href="login.html" target="_blank" class="admin-link-footer">Admin Login</a>
+    </div>
+</footer>
+
+    
+</body>
+</html>

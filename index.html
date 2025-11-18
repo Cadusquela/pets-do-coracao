@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adoção de Pets - Seu Novo Amigo Espera Por Você</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Definição de Cores Pastéis (Baseado no seu pedido/imagem) */
+:root {
+    --cor-primaria: #A8DADC; /* Azul Pastel Claro - Fundo/Destaque */
+    --cor-secundaria: #457B9D; /* Azul/Ciano Médio - Textos Secundários */
+    --cor-acento: #FFCDB2; /* Pêssego Pastel - Botões/Ações */
+    --cor-sucesso: #A2D5AB; /* Verde Pastel - Sucesso/Destaque Positivo */
+    --cor-fundo-claro: #F1FAEE; /* Quase Branco - Fundo Principal */
+    --cor-texto-escuro: #1D3557; /* Azul Escuro - Textos Principais */
+    --sombra-suave: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --raio-arredondado: 12px;
+}
+
+/* Reset Básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Estilo do Corpo */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--cor-fundo-claro);
+    color: var(--cor-texto-escuro);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Links */
+a {
+    color: var(--cor-secundaria);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--cor-texto-escuro);
+}
+
+/* Botões Padrão (Estilo Animado e Arredondado) */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: var(--raio-arredondado);
+    text-transform: uppercase;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
+    border: none;
+}
+
+.btn-primario {
+    background-color: var(--cor-acento);
+    color: var(--cor-texto-escuro);
+    box-shadow: var(--sombra-suave);
+}
+
+.btn-primario:hover {
+    background-color: #FFB399; /* Um pouco mais escuro que o pêssego */
+    transform: translateY(-2px); /* Efeito de "levantar" */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primario:active {
+    transform: translateY(0); /* Efeito de "pressionar" */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Contêiner principal para centralizar o conteúdo */
+main {
+    flex-grow: 1;
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+/* Estilo do Header */
+.main-header {
+    background-color: white;
+    box-shadow: var(--sombra-suave);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-content {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: var(--cor-texto-escuro);
+    display: flex;
+    gap: 10px;
+}
+
+.logo img{
+  background-color: var(--cor-primaria);
+  width: 50px;
+  height: 50px;
+  border-radius: var(--raio-arredondado);
+}
+
+/* Estilo da Navegação Principal */
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+.main-nav a {
+    font-weight: 600;
+    padding: 5px 0;
+    position: relative;
+}
+
+/* Efeito sutil de sublinhado arredondado nos links */
+.main-nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background-color: var(--cor-acento);
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+.main-nav a:hover::after {
+    width: 100%;
+}
+
+/* Link de Admin discreto */
+.admin-link {
+    font-size: 0.85em;
+    opacity: 0.6;
+    font-weight: 400;
+}
+
+.admin-link:hover {
+    opacity: 1;
+}
+
+/* Estilo da Hero Section */
+.hero-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--cor-primaria);
+    padding: 50px;
+    margin: 30px 0;
+    border-radius: 20px;
+    gap: 40px;
+    box-shadow: var(--sombra-suave);
+}
+
+.hero-text {
+    max-width: 50%;
+}
+
+.hero-text h1 {
+    font-size: 2.8em;
+    margin-bottom: 15px;
+    line-height: 1.1;
+    color: var(--cor-texto-escuro);
+}
+
+.hero-text p {
+    font-size: 1.1em;
+    margin-bottom: 30px;
+    color: var(--cor-secundaria);
+}
+
+.btn-grande {
+    padding: 15px 30px;
+    font-size: 1.1em;
+}
+
+.hero-image  {
+    /* Apenas para manter o espaço e a intenção do design */
+    width: 40%;
+    height: 300px;
+    background-color: #fce7e7; /* Cor de preenchimento para placeholder */
+    border-radius: var(--raio-arredondado);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-image img{
+  border-radius: var(--raio-arredondado);
+}
+
+/* Estilo da Seção de Destaques */
+.destaques-section {
+    text-align: center;
+    padding: 40px 0;
+}
+
+.destaques-section h2 {
+    font-size: 2em;
+    margin-bottom: 30px;
+}
+
+.pets-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.pet-preview-card {
+    background-color: white;
+    border-radius: var(--raio-arredondado);
+    overflow: hidden;
+    box-shadow: var(--sombra-suave);
+    transition: transform 0.3s ease;
+}
+
+.pet-preview-card:hover {
+    transform: translateY(-5px);
+}
+
+.pet-preview-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.pet-preview-card h3 {
+    padding: 15px;
+    font-size: 1.2em;
+    color: var(--cor-texto-escuro);
+}
+
+.btn-secundario {
+    /* Estilo diferente para o segundo botão, se houver */
+    background-color: transparent;
+    border: 2px solid var(--cor-secundaria);
+    color: var(--cor-secundaria);
+    box-shadow: none;
+}
+
+.btn-secundario:hover {
+    background-color: var(--cor-secundaria);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.main-footer {
+    background-color: var(--cor-secundaria); /* Um tom mais escuro e sóbrio para o fundo */
+    color: var(--cor-fundo-claro); /* Texto claro */
+    padding: 40px 0 0 0; /* Padding superior para o conteúdo */
+    margin-top: 40px;
+}
+
+.footer-content {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    flex-wrap: wrap; 
+    padding-bottom: 30px;
+}
+
+.footer-col {
+    flex-basis: 250px; /* Largura mínima para as colunas */
+}
+
+.footer-col h4 {
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--cor-acento); /* Destaque pastel */
+}
+
+.footer-col p, .footer-col li {
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
+
+.footer-col ul {
+    list-style: none;
+}
+
+/* Links do Rodapé */
+.footer-col a {
+    color: var(--cor-fundo-claro);
+    transition: color 0.3s ease;
+}
+
+.footer-col a:hover {
+    color: var(--cor-acento); /* Efeito hover em cor pastel */
+}
+
+.footer-branding .logo {
+    font-size: 2em;
+    margin-bottom: 15px;
+    width: 350px;
+    display: flex;
+    color: var(--cor-fundo-claro); 
+}
+
+.footer-branding .logo img{
+  background-color: var(--cor-secundaria); 
+}
+
+/* Linha de Copyright e Admin */
+.footer-bottom {
+    background-color: var(--cor-texto-escuro); /* Faixa inferior mais escura para contraste */
+    padding: 15px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8em;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Link de Admin discreto no Footer */
+.admin-link-footer {
+    font-size: 0.75em; /* Bem pequeno */
+    opacity: 0.5;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--cor-fundo-claro); /* Cor clara */
+}
+
+.admin-link-footer:hover {
+    opacity: 1;
+    color: var(--cor-acento); /* Destaque ao passar o mouse */
+}
+</style>
+</head>
+<body>
+<header class="main-header">
+    <div class="header-content">
+        <a href="index.html" class="logo">
+            <span style="color: var(--cor-acento);">Pets </span>do Coração <img src="https://uploads.onecompiler.io/442h72dq4/443se3c38/image-removebg-preview.png" width="50px">
+        </a>
+        
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">Início</a></li>
+                <li><a href="pets.html">Nossos Pets</a></li>
+                <li><a href="doacao.html">Quero Doar</a></li>
+                <li><a href="sobre.html">Sobre nós</a></li>
+            </ul>
+        </nav>
+
+        <a href="login.html" target="_blank" class="admin-link">Admin</a>
+    </div>
+</header>
+
+<main>
+    <section class="hero-section">
+        <div class="hero-text">
+            <h1>Encontre o seu Melhor Amigo hoje!</h1>
+            <p>Milhares de pets resgatados estão à espera de um lar cheio de amor e carinho. Navegue pela nossa vitrine e mude uma vida.</p>
+            <a href="pets.html" class="btn btn-primario btn-grande">
+                Ver Nossos Pets
+            </a>
+        </div>
+        <div class="hero-image">
+            <img src="https://downloads.ctfassets.net/aynow2efrlx4/6xB3BWfEWA9pIqdzCHZB0Y/0771c4d77ac448f5b399cf3e08d1095a/pug-2.jpg" width="85%">
+        </div>
+    </section>
+
+    <section class="destaques-section">
+        <h2>Pets à Procura de um Lar</h2>
+        <div class="pets-preview-grid">
+            <div class="pet-preview-card">
+                <img src="https://uploads.onecompiler.io/442h72dq4/443se3c38/Animal_Adorable_Dog_4K_HD_Photo_3840x2160.jpg" alt="Nome do Pet 1">
+                <h3>Bartolomeu</h3>
+            </div>
+            <div class="pet-preview-card">
+                <img src="https://uploads.onecompiler.io/442h72dq4/443se3c38/1026829-3840x2160-desktop-4k-pets-background-image.jpg" alt="Nome do Pet 2">
+                <h3>Amora</h3>
+            </div>
+            <div class="pet-preview-card">
+                <img src="https://uploads.onecompiler.io/442h72dq4/443se3c38/cute-pets-pictures-k0c4a9npzte6eznj.jpg" alt="Nome do Pet 3">
+                <h3>Zeus</h3>
+            </div>
+        </div>
+        <a href="pets.html" class="btn btn-secundario">Ver Todos os Pets</a>
+    </section>
+
+</main>
+
+<footer class="main-footer">
+    <div class="footer-content">
+        
+        <div class="footer-col footer-branding">
+            <a href="index.html" class="logo">
+                <span style="color: var(--cor-acento);">Pets </span>do Coração <img src="https://uploads.onecompiler.io/442h72dq4/443se3c38/image-removebg-preview.png" width="25px">
+            </a>
+            <p>A instituição que une corações com patinhas.</p>
+        </div>
+        
+        <div class="footer-col footer-nav-links">
+            <h4>Páginas</h4>
+            <ul>
+                <li><a href="index.html">Início</a></li>
+                <li><a href="pets.html">Nossos Pets</a></li>
+                <li><a href="doacao.html">Quero Doar</a></li>
+                <li><a href="sobre.html">Sobre nós</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col footer-contact">
+            <h4>Contato & Redes</h4>
+            <p>Email: contato@petadote.org</p>
+            <p>Telefone: (00) 1234-5678</p>
+            <p>Loc: Santa Maria da Vitória (BA)</p>
+            <div class="social-links">
+                <a href="#" class="social-icon">Facebook</a> |
+                <a href="#" class="social-icon">Instagram</a>
+            </div>
+        </div>
+
+    </div>
+    
+    <div class="footer-bottom">
+        <p>
+            &copy; 2025 Pets do Coração. CNPJ: 39.415.432/0001‑07 | Todos os direitos reservados.
+        </p>
+        <a href="login.html" target="_blank" class="admin-link-footer">Admin Login</a>
+    </div>
+</footer>
+    
+</body>
+</html>
