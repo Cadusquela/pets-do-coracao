@@ -829,7 +829,7 @@ main {
     const SUPABASE_URL = "https://wofnhccvyghtoykowsfi.supabase.co"; 
     // CHAVE ANON: Seu código está com a chave, mantive aqui:
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvZm5oY2N2eWdodG95a293c2ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0NzI3NjksImV4cCI6MjA3OTA0ODc2OX0.TcKp3_oBSM7P0azu_BNjepBKwXXm9hA7Zp6iupdWfE0"; 
-    const PETS_TABLE_NAME = "pets"; 
+    const PETS_TABLE_NAME = "public.pets"; 
     const ADOPTION_REQUESTS_TABLE = "adoption_requests"; // Nova tabela para pedidos de adoção
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -1030,5 +1030,6 @@ main {
 </script>
 </body>
 </html>
+
 
 
