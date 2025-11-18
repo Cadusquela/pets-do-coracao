@@ -85,7 +85,7 @@ document.getElementById("btnSave").addEventListener("click", async () => {
   };
 
   // Inserção de dados
-  const { error } = await supabaseClient.from("api.pets").insert(pet); 
+  const { error } = await supabaseClient.from('public.pets').insert(pet); 
   
   if(error) {
     alert(`Erro ao salvar (DB): ${error.message}`);
@@ -100,7 +100,7 @@ document.getElementById("btnSave").addEventListener("click", async () => {
 // Função de carregamento
 async function loadPets(){
   // Select de dados
-  const { data, error } = await supabaseClient.from("api.pets").select("*");
+  const { data, error } = await supabaseClient.from('public.pets').select("*");
   if(error) {
     console.error("Database Select Error:", error);
     return;
@@ -125,5 +125,6 @@ loadPets();
 </script>
 </body>
 </html>
+
 
 
