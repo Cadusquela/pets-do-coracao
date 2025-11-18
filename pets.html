@@ -824,15 +824,17 @@ main {
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
     // =======================================================
-    // ⚠️ 1. CONFIGURAÇÃO (ATUALIZE COM SEUS VALORES REAIS)
+    // ⚠️ 1. CONFIGURAÇÃO (ATUALIZE E VERIFIQUE)
     // =======================================================
     const SUPABASE_URL = "https://wofnhccvyghtoykowsfi.supabase.co"; 
+    // CHAVE ANON: Seu código está com a chave, mantive aqui:
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvZm5oY2N2eWdodG95a293c2ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0NzI3NjksImV4cCI6MjA3OTA0ODc2OX0.TcKp3_oBSM7P0azu_BNjepBKwXXm9hA7Zp6iupdWfE0"; 
-    const TABLE_NAME = "pets"; // O nome da sua tabela
+    const PETS_TABLE_NAME = "pets"; 
+    const ADOPTION_REQUESTS_TABLE = "adoption_requests"; // Nova tabela para pedidos de adoção
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     
-    // Variável para armazenar a lista de pets globalmente, usada para a filtragem local
+    // Variável para armazenar a lista de pets globalmente
     let allPets = []; 
     // =======================================================
 
@@ -842,37 +844,33 @@ main {
     const adoptionForm = document.getElementById('adoption-form');
     const modal = document.getElementById('adoptionModal');
     
-    // Removemos a chave LS_KEY e funções de leitura do localStorage
-
     // =======================================================
     // 🐕 FUNÇÕES DE CARREGAMENTO E MOSTRAR PETS
     // =======================================================
 
-    // 🔄 loadPetsFromDB (Substitui loadPetsFromLS)
     async function loadPetsFromDB(){
         // 1. Faz a requisição SELECT na base de dados
         const { data: pets, error } = await supabaseClient
-            .from(TABLE_NAME)
+            .from(PETS_TABLE_NAME)
             .select('*')
-            .eq('adopted', false) // Filtra apenas os pets NÃO adotados
-            .order('name', { ascending: true }); // Ordena pelo nome
+            .eq('adopted', false) 
+            .order('name', { ascending: true }); 
 
         if (error) {
             console.error("Erro ao carregar pets do DB:", error);
-            // Mostrar mensagem de erro no lugar dos pets
-            container.innerHTML = `<p style="color:red;">Não foi possível carregar os dados. Verifique o console.</p>`;
+            // Mostrar mensagem de erro
+            container.innerHTML = `<p style="color:red; text-align:center;">Não foi possível carregar os dados. Verifique o console e as permissões RLS (SELECT para 'anon').</p>`;
             empty.style.display = 'none';
             return;
         }
 
-        // 2. Armazena os dados globalmente para uso na filtragem
+        // 2. Armazena os dados globalmente
         allPets = pets || []; 
         
         // 3. Exibe a lista completa
         mostrarPets(allPets);
     }
 
-    // 🖼️ mostrarPets (Função de renderização mantida e adaptada)
     function mostrarPets(lista) {
         container.innerHTML = '';
 
@@ -883,12 +881,13 @@ main {
             empty.style.display = 'none';
         }
 
-        // A iteração usa o ID ÚNICO (p.id) do banco de dados, não o índice (idx)
         lista.forEach(p => {
             const card = document.createElement('div');
             card.className = 'pet-card';
-            // Assume que 'image_url' é o campo de imagem (como no código anterior)
             const imgUrl = p.image_url || 'https://via.placeholder.com/800x600?text=Sem+foto';
+
+            // Usando o campo 'breed' que corrigimos anteriormente:
+            const breedInfo = p.breed ? `<p><b>Raça:</b> ${escapeHtml(p.breed||'—')}</p>` : '';
 
             card.innerHTML = `
                 <div class="pet-image-container">
@@ -899,13 +898,14 @@ main {
                     <h2>${escapeHtml(p.name||'Sem nome')}</h2>
                     <div class="pet-details">
                         <p><b>Espécie:</b> ${escapeHtml(p.species||'—')}</p>
+                        ${breedInfo} 
                         <p><b>Idade:</b> ${escapeHtml(p.age||'?')} anos</p>
                         <p><b>Sexo:</b> ${escapeHtml(p.gender||'—')}</p>
                         <p><b>Porte:</b> ${escapeHtml(p.size||'—')}</p>
                     </div>
                     <div class="pet-health">
-                        <span class="health-badge">${escapeHtml(p.vaccinated || 'Vacinado?')}</span>
-                        <span class="health-badge">${p.dewormed === 'Sim' ? 'Vermifugado' : 'Não vermifugado'}</span>
+                        <span class="health-badge">${p.vaccinated === 'Sim' ? 'Vacinado' : 'Não Vacinado'}</span>
+                        <span class="health-badge">${p.dewormed === 'Sim' ? 'Vermifugado' : 'Não Vermifugado'}</span>
                     </div>
                     <div class="pet-temperament"><p style="color:var(--muted)">${escapeHtml(p.desc || 'Sem descrição')}</p></div>
                     <button class="btn-adotar" data-id="${p.id}" data-name="${escapeHtml(p.name||'pet')}"><i class="fas fa-paw"></i> Quero Adotar</button>
@@ -918,8 +918,10 @@ main {
     }
 
     // =======================================================
-    // 🔎 FUNÇÕES DE FILTRAGEM (USANDO LISTA LOCAL)
+    // 🔎 FUNÇÕES DE FILTRAGEM E RESET
     // =======================================================
+    
+    // NOTA: Estas funções foram mantidas para usar a lista local 'allPets'
 
     function filtrarPets() {
         const especie = document.getElementById("filtroEspecie").value;
@@ -927,7 +929,6 @@ main {
         const sexo = document.getElementById("filtroSexo").value;
         const vacina = document.getElementById("filtroVacina").value;
 
-        // Usa a lista 'allPets' carregada do DB
         const filtrados = allPets.filter(p => {
             return (
                 (especie === "" || p.species === especie) &&
@@ -946,27 +947,24 @@ main {
         document.getElementById("filtroSexo").value = "";
         document.getElementById("filtroVacina").value = "";
 
-        // Mostra a lista completa que já está na memória
-        mostrarPets(allPets); 
+        mostrarPets(allPets); 
     }
     
     // =======================================================
-    // 🐾 LÓGICA DO BOTÃO ADOTAR (ADAPTAÇÃO)
+    // 🐾 LÓGICA DO MODAL E ADOÇÃO (CORRIGIDA)
     // =======================================================
 
     function attachAdoptButtons(){
         const buttons = document.querySelectorAll('.btn-adotar');
         buttons.forEach(btn=>{
             btn.onclick = () => {
-                // Captura o ID do banco de dados (data-id)
-                const petId = btn.dataset.id; 
+                const petId = btn.dataset.id; 
                 const name = btn.dataset.name;
                 openModal(petId, name);
             };
         });
     }
 
-    // Modal logic (mantida, ajustando o uso do ID)
     const closeBtn = document.querySelector('.close-btn');
     const modalTitle = document.getElementById('modal-title');
     const petNameField = document.getElementById('pet_name_form');
@@ -975,41 +973,47 @@ main {
     function openModal(petId, name){
         modalTitle.textContent = `Formulário de Adoção para ${name}`;
         petNameField.value = name;
-        petIdField.value = petId; // Armazena o ID do DB
+        petIdField.value = petId; 
         modal.style.display = 'block';
     }
     
     closeBtn.onclick = ()=> modal.style.display = 'none';
     window.onclick = e => { if(e.target === modal) modal.style.display = 'none'; };
 
-    // 📤 Lógica de envio do formulário (Substituído por um INSERT no DB)
+    // 📤 Lógica de envio do formulário (CORREÇÃO DE IDS)
     adoptionForm.onsubmit = async function(e){
         e.preventDefault();
         
         const petId = document.getElementById('pet_id_form').value;
-        const userName = document.getElementById('user_name').value;
-        const userEmail = document.getElementById('user_email').value;
-        const userPhone = document.getElementById('user_phone').value;
+        // 🛑 CORRIGIDO: Lendo IDs do HTML
+        const nomeCompleto = document.getElementById('nome_completo').value; 
+        const email = document.getElementById('email').value;
+        const telefone = document.getElementById('telefone').value;
+        const moradia = document.getElementById('moradia').value;
+        const experiencia = document.getElementById('experiencia').value;
+        const petName = document.getElementById('pet_name_form').value; // Nome do pet
 
         if(!petId) return alert('Erro: ID do pet não encontrado.');
 
         const adoptionRequest = {
             pet_id: petId,
-            user_name: userName,
-            user_email: userEmail,
-            user_phone: userPhone,
+            pet_name: petName, // Adicionado para facilitar a visualização no DB
+            user_name: nomeCompleto,
+            user_email: email,
+            user_phone: telefone,
+            user_residence: moradia,
+            user_experience: experiencia,
             requested_at: new Date().toISOString()
-            // Adicione outros campos necessários
         };
 
-        // Supondo que você tenha uma tabela chamada 'adoption_requests' para salvar os pedidos
-        const { error } = await supabaseClient.from('adoption_requests').insert(adoptionRequest);
+        // Supondo que você tenha uma tabela chamada 'adoption_requests'
+        const { error } = await supabaseClient.from(ADOPTION_REQUESTS_TABLE).insert(adoptionRequest);
         
         if(error){
             console.error("Erro ao enviar pedido:", error);
-            alert(`Erro ao enviar pedido de adoção: ${error.message}`);
+            alert(`Erro ao enviar pedido de adoção: ${error.message}. Verifique as permissões RLS (INSERT para 'anon') na tabela '${ADOPTION_REQUESTS_TABLE}'.`);
         } else {
-            alert(`Pedido de adoção para o pet ID ${petId} enviado com sucesso! Entraremos em contato em breve.`);
+            alert(`Pedido de adoção para o pet ${petName} enviado com sucesso! Entraremos em contato em breve.`);
         }
 
         adoptionForm.reset(); 
@@ -1022,9 +1026,9 @@ main {
         return String(text).replace(/[&<>"']/g, s=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[s]);
     }
 
-    // Removemos o listener de 'storage' pois o DB não depende do localStorage.
     document.addEventListener('DOMContentLoaded', loadPetsFromDB);
 </script>
 </body>
 </html>
+
 
