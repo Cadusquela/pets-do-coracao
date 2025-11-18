@@ -844,32 +844,37 @@ main {
     const adoptionForm = document.getElementById('adoption-form');
     const modal = document.getElementById('adoptionModal');
     
-    // =======================================================
-    // 🐕 FUNÇÕES DE CARREGAMENTO E MOSTRAR PETS
-    // =======================================================
+// =======================================================
+// 🐕 FUNÇÕES DE CARREGAMENTO E MOSTRAR PETS
+// =======================================================
 
-    async function loadPetsFromDB(){
-        // 1. Faz a requisição SELECT na base de dados
-        const { data: pets, error } = await supabaseClient
-            .from(PETS_TABLE_NAME)
-            .select('*')
-            .eq('adopted', false) 
-            .order('name', { ascending: true }); 
+// 🔄 loadPetsFromDB (Função de carregamento principal, adaptada da sua referência)
+async function loadPetsFromDB(){
+    // 1. Faz a requisição SELECT na base de dados
+    const { data: pets, error } = await supabaseClient
+        .from(PETS_TABLE_NAME) // Usa a variável PETS_TABLE_NAME ("pets")
+        .select('*')
+        .eq('adopted', false) // Filtra apenas os pets NÃO adotados
+        .order('name', { ascending: true }); // Ordena pelo nome
 
-        if (error) {
-            console.error("Erro ao carregar pets do DB:", error);
-            // Mostrar mensagem de erro
-            container.innerHTML = `<p style="color:red; text-align:center;">Não foi possível carregar os dados. Verifique o console e as permissões RLS (SELECT para 'anon').</p>`;
-            empty.style.display = 'none';
-            return;
-        }
-
-        // 2. Armazena os dados globalmente
-        allPets = pets || []; 
+    if (error) {
+        console.error("Database Select Error:", error); // Usando a sua mensagem de erro
         
-        // 3. Exibe a lista completa
-        mostrarPets(allPets);
+        // 🛑 Mostrar mensagem de erro no container de pets
+        container.innerHTML = `<p style="color:red; text-align:center; padding: 20px;">
+                                    Não foi possível carregar os dados. 
+                                    Verifique o console para detalhes e confirme as permissões RLS (SELECT para 'anon').
+                                </p>`;
+        empty.style.display = 'none';
+        return;
     }
+
+    // 2. Armazena os dados globalmente para uso na filtragem
+    allPets = pets || []; 
+    
+    // 3. Exibe a lista
+    mostrarPets(allPets);
+}
 
     function mostrarPets(lista) {
         container.innerHTML = '';
@@ -1030,6 +1035,7 @@ main {
 </script>
 </body>
 </html>
+
 
 
 
