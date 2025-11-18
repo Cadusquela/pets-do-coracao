@@ -5,6 +5,7 @@
 <title>Painel Admin - Pets</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
+/* CSS é mantido inalterado */
 body{font-family:Poppins;background:#F1FAEE;margin:0;padding:20px}
 .form{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1);display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
 input,select,textarea{padding:10px;border-radius:8px;border:2px solid #A8DADC}
@@ -18,19 +19,19 @@ textarea{grid-column:span 2}
 
 <h1>Painel Administrativo</h1>
 
-<div class="form">
-  <input id="name" placeholder="Nome">
-  <input id="species" placeholder="Espécie">
-  <input id="age" type="number" placeholder="Idade">
-  <input id="breed" placeholder="Raça">
-  <select id="gender"><option value="">Sexo</option><option>Macho</option><option>Fêmea</option></select>
-  <select id="size"><option value="">Porte</option><option>Pequeno</option><option>Médio</option><option>Grande</option></select>
-  <input type="file" id="imageFile" accept="image/*">
-  <select id="vaccinated"><option value="">Vacinado?</option><option>Sim</option><option>Não</option></select>
-  <select id="dewormed"><option value="">Vermifugado?</option><option>Sim</option><option>Não</option></select>
-  <textarea id="desc" placeholder="Descrição"></textarea>
+<div class="form" id="petForm">
+  <input id="name" placeholder="Nome">
+  <input id="species" placeholder="Espécie">
+  <input id="age" type="number" placeholder="Idade">
+  <input id="breed" placeholder="Raça">
+  <select id="gender"><option value="">Sexo</option><option>Macho</option><option>Fêmea</option></select>
+  <select id="size"><option value="">Porte</option><option>Pequeno</option><option>Médio</option><option>Grande</option></select>
+  <input type="file" id="imageFile" accept="image/*">
+  <select id="vaccinated"><option value="">Vacinado?</option><option>Sim</option><option>Não</option></select>
+  <select id="dewormed"><option value="">Vermifugado?</option><option>Sim</option><option>Não</option></select>
+  <textarea id="desc" placeholder="Descrição"></textarea>
 
-  <button class="btn" id="btnSave">Salvar Pet</button>
+  <button class="btn" id="btnSave">Salvar Pet</button>
 </div>
 
 <h2>Pets Cadastrados</h2>
@@ -38,31 +39,27 @@ textarea{grid-column:span 2}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ⚠️ 1. Substitua com suas credenciais REAIS
+// ⚠️ ATENÇÃO: Essas credenciais estão OK para o código, mas a chave Anon é pública. 
+// A única razão para o código não funcionar agora é a configuração do Supabase.
 const SUPABASE_URL = "https://wofnhccvyghtoykowsfi.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvZm5oY2N2eWdodG95a293c2ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0NzI3NjksImV4cCI6MjA3OTA0ODc2OX0.TcKp3_oBSM7P0azu_BNjepBKwXXm9hA7Zp6iupdWfE0";
 
-// 2. Inicialização correta
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); 
-
-// Referência ao elemento de listagem
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const listElement = document.getElementById("list");
 
-// Função de upload usando supabaseClient
+// Função de upload
 async function uploadImage(file){
   const fileName = `${Date.now()}_${file.name}`;
-  // Certifique-se que o bucket 'pet-images' existe!
-  const { data, error } = await supabaseClient.storage 
-    .from("pet-images")
+  const { data, error } = await supabaseClient.storage 
+    .from("pet-images") // Verifica se este bucket existe no Supabase
     .upload(`pets/${fileName}`, file);
 
-  if(error){ 
-    alert(`Erro ao enviar imagem: ${error.message}`); 
-    console.error("Storage Error:", error);
-    return null; 
-  }
-
-  const { publicUrl } = supabaseClient 
+  if(error){ 
+    alert(`Erro no Storage: ${error.message}`); 
+    console.error("Storage Error:", error);
+    return null; 
+  }
+  const { publicUrl } = supabaseClient 
     .storage
     .from("pet-images")
     .getPublicUrl(data.path);
@@ -71,7 +68,6 @@ async function uploadImage(file){
 }
 
 document.getElementById("btnSave").addEventListener("click", async () => {
-  // Coleta de dados mais segura com document.getElementById
   const file = document.getElementById("imageFile").files[0];
   const image_url = file ? await uploadImage(file) : null;
 
@@ -88,26 +84,28 @@ document.getElementById("btnSave").addEventListener("click", async () => {
     image_url,
   };
 
-  // Inserção de dados usando supabaseClient
-  const { error } = await supabaseClient.from("pets").insert(pet); 
-  
+  // Inserção de dados
+  const { error } = await supabaseClient.from("pets").insert(pet); 
+  
   if(error) {
-    alert(`Erro ao salvar: ${error.message}`);
-    console.error("Database Insert Error:", error);
-  } else { 
-    alert("Pet salvo!"); 
-    loadPets(); 
-  }
+    alert(`Erro ao salvar (DB): ${error.message}`);
+    console.error("Database Insert Error:", error);
+  } else { 
+    alert("Pet salvo!"); 
+    document.getElementById("petForm").reset(); // Limpa o formulário
+    loadPets(); 
+  }
 });
 
-// Função de carregamento usando supabaseClient
+// Função de carregamento
 async function loadPets(){
+  // Select de dados
   const { data, error } = await supabaseClient.from("pets").select("*");
-  if(error) {
-    console.error("Database Select Error:", error);
-    return;
-  }
-  
+  if(error) {
+    console.error("Database Select Error:", error);
+    return;
+  }
+  
   listElement.innerHTML = "";
   data.forEach(p => {
     listElement.innerHTML += `
@@ -125,3 +123,5 @@ async function loadPets(){
 
 loadPets();
 </script>
+</body>
+</html>
