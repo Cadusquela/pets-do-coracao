@@ -1,25 +1,64 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="utf-8">
-<title>Login Admin</title>
+<meta charset="UTF-8">
+<title>Login Administrativo</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
-body{font-family:Poppins;background:#F1FAEE;display:flex;justify-content:center;align-items:center;height:100vh;margin:0}
-.box{background:#fff;padding:30px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,0.1);width:320px}
-input{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:2px solid #A8DADC}
-button{width:100%;padding:12px;margin-top:20px;background:#FFCDB2;border:none;border-radius:10px;font-weight:700;cursor:pointer}
-#error{color:red;font-size:14px;text-align:center;margin-top:10px}
+body {
+  font-family: "Poppins";
+  background: #F1FAEE;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.login-box {
+  background: #fff;
+  padding: 30px;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  width: 500px;
+}
+.login-box h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+input {
+  width: 94%;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 10px;
+  border: 2px solid #A8DADC;
+  font-size: 15px;
+}
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  background: #FFCDB2;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+#error {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+}
 </style>
 </head>
 <body>
 
-<div class="box">
-  <h2 style="text-align:center">Acesso Admin</h2>
+<div class="login-box">
+  <h2>Acesso Administrativo</h2>
   <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Senha">
-  <button onclick="login()">Entrar</button>
-  <p id="error"></p>
+  <input type="password" id="password" placeholder="Digite a senha">
+  <button id="btnLogin">Entrar</button>
+  <p class="error" id="err"></p>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -62,5 +101,3 @@ async function login(){
 </script>
 </body>
 </html>
-
-
