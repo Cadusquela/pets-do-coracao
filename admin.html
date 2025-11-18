@@ -91,12 +91,6 @@
   let pets = [];
   let editingId = null;
 
-  // BLOQUEIO DE ACESSO
-if (localStorage.getItem("admin_logado") !== "true") {
-    alert("Acesso negado. Faça login primeiro.");
-    window.location.href = "login.html";
-}
-
   function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 
   function load(){
@@ -267,3 +261,4 @@ form.addEventListener('submit', e=>{
 </script>
 </body>
 </html>
+
